@@ -1,6 +1,7 @@
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public int damage = 1;
     public int health;
     public int maxHealth = 5;
+    public int score = 0;
     public Vector3 originScale;
     private Rigidbody rb;
     public TextMeshProUGUI healthtxt;
@@ -25,6 +27,8 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         originScale = transform.localScale;
         health = maxHealth;
+        healthtxt.text = "HP: " + health.ToString() + "/" + maxHealth.ToString();
+        scoretxt.text = "Score: " + score;
     }
 
     // Update is called once per frame
@@ -55,6 +59,11 @@ public class PlayerController : MonoBehaviour
         {
             Crouch(false);
         }
+
+        if (health < 1)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Crouch(bool isCrouch)
@@ -77,8 +86,50 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.transform.CompareTag("Obstacle"))
         {
+
             health = health - damage;
-            healthtxt.text = "HP: " + health.ToString() + "/" + maxHealth.ToString();
+
+            if (health > maxHealth)
+            {
+                healthtxt.text = "HP: " + maxHealth.ToString() + "+" + (health - maxHealth).ToString() + "/" + maxHealth.ToString();
+            }
+            else
+            {
+                healthtxt.text = "HP: " + health.ToString() + "/" + maxHealth.ToString();
+            }
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.CompareTag("Collectible"))
+        {
+            score = score + 50;
+            scoretxt.text = "Score: " + score;
+            Destroy(other.transform.gameObject);
+        }
+
+        if (other.transform.CompareTag("Collectible2"))
+        {
+            score = score + 100;
+            scoretxt.text = "Score: " + score;
+            Destroy(other.transform.gameObject);
+        }
+
+        if (other.transform.CompareTag("Heal"))
+        {
+            health = health + 1;
+        
+            if (health > maxHealth)
+            {
+                healthtxt.text = "HP: " + maxHealth.ToString() + "+" + (health - maxHealth).ToString() + "/" + maxHealth.ToString();
+            }
+            else
+            {
+                healthtxt.text = "HP: " + health.ToString() + "/" + maxHealth.ToString();
+            }
+
+            Destroy(other.transform.gameObject);
         }
     }
 }

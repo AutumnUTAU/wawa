@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Floor
   - Obstacle
+  - Heal
+  - Collectible
+  - Collectible2
   layers:
   - Default
   - TransparentFX
